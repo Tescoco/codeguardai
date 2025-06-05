@@ -81,21 +81,6 @@ Return your analysis as a JSON array of vulnerability objects with this structur
 Only return valid JSON. If no vulnerabilities are found, return {"vulnerabilities": []}.
 `;
 
-const CODE_QUALITY_PROMPT = `
-Analyze the Solidity code for best practices, code quality, and potential improvements:
-
-1. Code structure and organization
-2. Gas optimization opportunities
-3. Security best practices compliance
-4. Error handling patterns
-5. Event emission for transparency
-6. Documentation quality
-7. Upgrade patterns and proxy safety
-8. Compliance with ERC standards
-
-Provide recommendations for improvements even if no critical vulnerabilities exist.
-`;
-
 export async function generateAIAnalysis(
   sourceCode: string,
   analysisId: string
@@ -191,47 +176,6 @@ async function analyzeCodeChunk(
   }
 }
 
-async function performCodeQualityAnalysis(
-  sourceCode: string
-): Promise<string[]> {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        {
-          role: "system",
-          content: CODE_QUALITY_PROMPT,
-        },
-        {
-          role: "user",
-          content: `Analyze this Solidity code for best practices and quality:\n\n\`\`\`solidity\n${sourceCode}\n\`\`\``,
-        },
-      ],
-      temperature: 0.2,
-      max_tokens: 2000,
-    });
-
-    const response = completion.choices[0]?.message?.content;
-    if (response) {
-      // Extract recommendations from the response
-      return response
-        .split("\n")
-        .filter(
-          (line) =>
-            line.trim().length > 0 &&
-            (line.includes("recommend") ||
-              line.includes("improve") ||
-              line.includes("consider"))
-        );
-    }
-
-    return [];
-  } catch (error) {
-    console.error("Code quality analysis failed:", error);
-    return [];
-  }
-}
-
 function splitCodeIntoChunks(code: string, maxChunkSize: number): string[] {
   const lines = code.split("\n");
   const chunks: string[] = [];
@@ -262,7 +206,7 @@ function validateSeverity(
   const validSeverities = ["critical", "high", "medium", "low"];
   const normalizedSeverity = severity?.toLowerCase();
   return validSeverities.includes(normalizedSeverity)
-    ? (normalizedSeverity as any)
+    ? (normalizedSeverity as "critical" | "high" | "medium" | "low")
     : null;
 }
 

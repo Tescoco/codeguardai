@@ -6,12 +6,12 @@ import Report from "../../../../../models/Report";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { analysisId: string } }
+  { params }: { params: Promise<{ analysisId: string }> }
 ) {
   try {
     await connectToDatabase();
 
-    const { analysisId } = params;
+    const { analysisId } = await params;
 
     if (!analysisId) {
       return NextResponse.json(

@@ -577,13 +577,17 @@ function combineVulnerabilityFindings(
   return combined;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function generateGasOptimizations(_contractInfo: ContractInfo): unknown[] {
   // TODO: Implement gas optimization detection
   return [];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function generateBestPractices(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _contractInfo: ContractInfo,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _vulnerabilities: VulnerabilityFinding[]
 ): unknown[] {
   // TODO: Implement best practices checking
